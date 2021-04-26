@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "LexiLearner",
+    "slug": "snack-dd5ee417-9c56-4320-9bdc-0ef147af4716",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./lexi.png",
+    "splash": {
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.119061.LexiLearner"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./lexi.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.helloWorld"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
