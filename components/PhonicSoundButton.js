@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
 // Importing Audio so we can use sound clips.
 import { Audio } from 'expo-av';
+import * as Speech from "expo-speech";
 
 // exporting the class so other files can import it.
 export default class PhonicSoundButton extends React.Component {
@@ -15,16 +16,16 @@ export default class PhonicSoundButton extends React.Component {
 
   // This async function will make the sounds.
   playSound = async soundChunk => {
-    console.log(soundChunk);
-    // Var to contain the link.
+    //Var to contain the link.
     var soundLink =
     // String concatenation is used to here by combining the link, the "soundChunk" variable, and ".mp3" to play the sound.
-      'https://whitehatjrcontent.s3.ap-south-1.amazonaws.com/phones/' +
+      'https://s3-whitehatjrcontent.whjr.online/phones/' +
       soundChunk +
       '.mp3';
+      
     // Creating async function to store the variable "soundLink" inside of uri, and setting "shouldPlay" as true. shouldPlay will decide whether it will play or not.
     await Audio.Sound.createAsync(
-      {
+      { 
         uri: soundLink,
       },
       { shouldPlay: true }

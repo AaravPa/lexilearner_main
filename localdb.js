@@ -32,7 +32,7 @@ const db2 = {
     was: { chunks: ['w', 'a', 's'], phones: ['W', 'AA', 'Z'] },
     we: { chunks: ['w', 'e'], phones: ['W', 'IY'] },
     test: { chunks: ['t', 'e', 's', 't'], phones: ['T', 'E', 'S', 'T'] },
-    colonel: { chunks: ['c', 'olo', 'ne', 'l' ], phones: ['K', 'ER', 'N', 'L'] },
+    colonel: { chunks: ['c', 'ol', 'on', 'e', 'l'], phones: ['K', 'ER', 'N', 'AH','L'] },
     ironic: { chunks: ['i', 'r', 'o', 'n', 'i', 'c' ], phones: ['AY', 'R', 'AA', "N", 'IH', 'K'] },
   };
   export default db2;
