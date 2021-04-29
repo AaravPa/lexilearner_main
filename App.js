@@ -32,8 +32,8 @@ import ScannerScreen from "./screens/Scanner";
           } else if (route.name === 'WordBreaker') {
             // if the tab is not being focused, it will be a list, but if it is focused, it will be a list, but it will be fully highlighted with a box around the icon.
             iconName = focused
-            ? 'ios-list-box'
-            : 'ios-list';
+            ? 'ios-apps' 
+            : 'ios-apps';
             // if statement where if the routename, or the name of the tab, is Quiz, then the icon will be a question mark.
           } else if (route.name === 'Scanner') {
             iconName = focused

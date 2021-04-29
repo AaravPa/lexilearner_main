@@ -4,9 +4,11 @@ import React from 'react';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native';
 // Importing "Speech" to say what the user typed in.
 import * as Speech from "expo-speech";
-import * as Permissions from "expo-permissions";
+// Importing ImagePicker so the user can select images to scan.
 import * as ImagePicker from "expo-image-picker";
+// Importing firebase to store the selected picture.
 import { firebase } from '../config';
+// Importing Camera do the user can take pictures that he/she wants to scan.
 import { Camera } from "expo-camera";
 
 
@@ -26,8 +28,8 @@ export default class TextToSpeechScreen extends React.Component {
       wasTakePhotoPressed:false, 
     }
   } 
+  //function used for choosing photo
   chooseFile = async() => {
-
     const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
@@ -35,47 +37,48 @@ export default class TextToSpeechScreen extends React.Component {
         quality: 1,
       });
       this.uploadImage(result.uri);
-};
+  };
 
-uploadImage = async (uri) => {
-  this.setState({status : "uploading..", isSelectPictureVisible:false, isTextVisible:true, isListenAndResetVisible:true, isTakePhotoVisible:false });
-  var response = await fetch(uri);
-  var blob = await response.blob();
-  var fileName = Date.now()+".png"
-  var ref = firebase
-    .storage()
-    .ref()
-    .child("files/"+fileName);
+  //function used for uploading photo to firebase storage
+  uploadImage = async (uri) => {
+    this.setState({status : "adding image..", isSelectPictureVisible:false, isTextVisible:true, isListenAndResetVisible:true, isTakePhotoVisible:false });
+    var response = await fetch(uri);
+    var blob = await response.blob();
+    var fileName = Date.now()+".png"
+    var ref = firebase
+      .storage()
+      .ref()
+      .child("files/"+fileName);
 
-  return ref.put(blob).then((response) => {
-    this.fetchImage(fileName);
-  });
-};
-
-fetchImage = (fileName) => {
-  var storageRef = firebase
-    .storage()
-    .ref()
-    .child("files/" + fileName);
-
-  // Get the download URL
-  storageRef
-    .getDownloadURL()
-    .then((url) => {
-      this.setState({ status: "fetching..."});
-      this.performOCR(url);
-    })
-    .catch((error) => {
-      this.setState({ status: "#" });
+    return ref.put(blob).then((response) => {
+      this.fetchImage(fileName);
     });
-};
+  };
 
-startCamera = async() => {
-  const {status} = await Camera.requestPermissionsAsync();
-  this.setState({
-    startCamera: status === "granted"
-  })
-}
+  //function used for fetching the image url from firebase storage
+  fetchImage = (fileName) => {
+    var storageRef = firebase
+      .storage()
+      .ref()
+      .child("files/" + fileName);
+    storageRef
+      .getDownloadURL()
+      .then((url) => {
+        this.setState({ status: "finding text in image..."});
+        this.performOCR(url);
+      })
+      .catch((error) => {
+        this.setState({ status: "error" });
+      });
+  };
+
+  // function used to get permissions for camera
+  startCamera = async() => {
+    const {status} = await Camera.requestPermissionsAsync();
+    this.setState({
+      startCamera: status === "granted"
+    })
+  }
 
   // function that will say whatever is inside of "name" state.
   speak = () => {
@@ -83,6 +86,7 @@ startCamera = async() => {
     Speech.speak(thingToSay);
   }
 
+  //function theat will take the image and detect text from it
   performOCR = async(url) => {
     try {
     let body = JSON.stringify({
@@ -94,6 +98,7 @@ startCamera = async() => {
               }
           },
           features: [
+            //Text that will be recognized by API will be document text.
             { type: 'DOCUMENT_TEXT_DETECTION', maxResults: 5 },
           ]
         }
@@ -101,6 +106,7 @@ startCamera = async() => {
     });
     console.log(body);
     let response = await fetch(
+      //fetching Google Vision API Key.
       'https://vision.googleapis.com/v1/images:annotate?key='+'AIzaSyDs33U1Dwj_k2i-D_vZbkzAdAtGkGeqDKI',
       {
         headers: {
@@ -112,17 +118,20 @@ startCamera = async() => {
       }
     );
 
+    //Taking the response of JSON and converting it into a string and then into an object, and finally taking the text from the response.
     var responseJson = await response.json();
     var stringifiedResponse = JSON.stringify(responseJson)
     var array = JSON.parse(stringifiedResponse)
     var text = array.responses[0].fullTextAnnotation.text;
     this.setState({status:text}) 
  
-  } catch (error) {
-    console.log(error); 
-    this.setState({status:error}) 
+    //Predefined function that will look for any errors.
+    } catch (error) {
+      console.log(error); 
+      this.setState({status:error}) 
+    }
   }
-}
+
  render() {
     return (
     <View style={styles.container}>
@@ -132,6 +141,7 @@ startCamera = async() => {
             <TouchableOpacity
               style={styles.button3}  
                onPress={async() => { 
+                 // When the camera button is pressed, it will take a picture, hide the camera, and upload the image
                  const {uri} = await this.camera.takePictureAsync();
                  this.setState({startCamera:false})
                  this.uploadImage(uri)
@@ -141,65 +151,61 @@ startCamera = async() => {
           </View>
         </Camera>
         ) : (
-          <View style={styles.container}>
-            <View style={styles.profileContainer}>
-              <Text style={styles.title}>Scanner</Text>
-            </View>
-            <View style={styles.buttonContainer}>
-            {this.state.isSelectPictureVisible && 
-          <TouchableOpacity style={styles.button}
-          onPress={()=> {
-            this.chooseFile();
-          }}>   
-            <Text style ={styles.buttonText}>Select A Picture</Text>
-          </TouchableOpacity>
+    <View style={styles.container}>
+      <View style={styles.profileContainer}>
+        <Text style={styles.title}>Scanner</Text>
+      </View>
+        <View style={styles.buttonContainer}>
+          {this.state.isSelectPictureVisible && 
+            <TouchableOpacity style={styles.button}
+              onPress={()=> {
+                //When this button is pressed, you will be able to select a photo.
+                this.chooseFile();
+              }}>   
+              <Text style ={styles.buttonText}>Select A Picture</Text>
+            </TouchableOpacity>
           }
           {this.state.isTextVisible && 
-          <Text style ={styles.text}>{this.state.status}</Text>
+            <Text style ={styles.text}>{this.state.status}</Text>
           }
           {this.state.isListenAndResetVisible && 
-          <TouchableOpacity style={styles.button2}
-          // onPress will call the speak function, as well as dismiss the keyboard of the phone.
-          onPress ={()=> {
-            this.speak();     
-            Keyboard.dismiss();
-          }}>
-            
-            <Text style ={styles.buttonText}>Listen</Text>
-            
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.button2}
+            // onPress will call the speak function, as well as dismiss the keyboard of the phone.
+              onPress ={()=> {
+              //When listen button is pressed, it will say text that had been recognized.
+              this.speak();
+              }}>
+              <Text style ={styles.buttonText}>Listen</Text>            
+            </TouchableOpacity>
           }
           {this.state.isTakePhotoVisible && 
-          <TouchableOpacity style={styles.button2}
-          // onPress will call the speak function, as well as dismiss the keyboard of the phone.
-          onPress ={()=> {
-            this.startCamera();
-              this.setState({wasTakePhotoPressed:true})
-            //this.setState({ isCameraVisible:true})
-            
-          }}>
-            <Text style={styles.buttonText}>Take A Photo</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.button2}
+              onPress ={()=> {
+                //When this button is pressed it will ask for camera permissions.
+                this.startCamera();
+              }}>
+              <Text style={styles.buttonText}>Take A Photo</Text>
+            </TouchableOpacity>
           }
           {this.state.isListenAndResetVisible && 
-          <TouchableOpacity style={styles.button2}
-          // onPress will call the speak function, as well as dismiss the keyboard of the phone.
-          onPress ={()=> { 
-              this.setState({isSelectPictureVisible:true, isListenAndResetVisible:false,
+            <TouchableOpacity style={styles.button2}
+              onPress ={()=> { 
+                //When the reset button is pressed, it will hide the "listen" and "reset" button, the ouput text, as well as the camera, while the "select picture" and "take photo" button will be visible.
+                this.setState({isSelectPictureVisible:true, isListenAndResetVisible:false,
                 isTextVisible:false, isTakePhotoVisible:true, isCameraVisible:false,})
-          }}>
-            <Text style={styles.buttonText}>Reset</Text>
-          </TouchableOpacity>
+              }}>
+              <Text style={styles.buttonText}>Reset</Text>
+            </TouchableOpacity>
           }
-            </View>
           </View>
-          )
+        </View>
+        )
       } 
-      </View>
-     
+    </View>
     )
   }
  }
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -235,23 +241,23 @@ const styles = StyleSheet.create({
       width: 0,
       height: 8,
     },
-  shadowOpacity: 0.3,
-  shadowRadius: 10.32,
-  elevation: 16,
-},
-    button2: {
-      width: 240,
-      height: 40,
-      marginTop:20,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 64,
-      backgroundColor: '#f98003',
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 8,
-      },
+    shadowOpacity: 0.3,
+    shadowRadius: 10.32,
+    elevation: 16,
+  },
+  button2: {
+    width: 240,
+    height: 40,
+    marginTop:20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 64,
+    backgroundColor: '#f98003',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
     shadowOpacity: 0.3,
     shadowRadius: 10.32,
     elevation: 16,
@@ -269,10 +275,10 @@ const styles = StyleSheet.create({
       width: 0,
       height: 8,
     },
-  shadowOpacity: 0.3,
-  shadowRadius: 10.32,
-  elevation: 16,
-},
+    shadowOpacity: 0.3,
+    shadowRadius: 10.32,
+    elevation: 16,
+  },
   buttonText: {
     color: '#FFFF',
     fontWeight: "200",

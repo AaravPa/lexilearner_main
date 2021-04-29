@@ -14,62 +14,7 @@ export default class TextToSpeechScreen extends React.Component {
     }
   }
 
-// getFileName(name, path) {
-//     if (name != null) { return name; }
-
-//     if (Platform.OS === "ios") {
-//         path = "~" + path.substring(path.indexOf("/Documents"));
-//     }
-//     return path.split("/").pop();
-// }
-/**
- * Get platform specific value from response
- */
-// getPlatformPath({ path, uri }) {
-//     return Platform.select({
-//         android: { "value": path },
-//         ios: { "value": uri }
-//     })
-// }
-
-// getPlatformURI(imagePath) {
-//     let imgSource = imagePath;
-//     if (isNaN(imagePath)) {
-//         imgSource = { uri: this.state.imagePath };
-//         if (Platform.OS == 'android') {
-//             imgSource.uri = "file:///" + imgSource.uri;
-//         }
-//     }
-//     return imgSource
-// }
-
-
   // function that will say whatever is inside of "name" state.
-  
-  // selectPicture = async() => {
-  // const result  = await ImagePicker.launchImageLibraryAsync({
-  //   mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //   allowsEditing: true,
-  //   aspect: [4, 3],
-  //   quality: 1,
-  // });
-  // console.log(result.uri);
-
- 
-
-  // const {imageName, uploadUri} = this.state;
-  // let reference = storage().ref(result.fileName);
-  // let task = reference.putFile(result.uri);
-  // task.then(() => {
-  //   setState({ name : "image uploaded"});
-  //   console.log('Image uploaded to the bucket!');
-  //   //this.setState({ isLoading: false, status: 'Image uploaded successfully' });
-  // }).catch((e) => {
-  //     setState({ name : "image upload failed"});
-  //     //status = 'Something went wrong';
-  //     console.log('uploading image error => ', e);
-  //     //this.setState({ isLoading: false, status: 'Something went wrong' });
-  // });
   speak = () => {
     var thingToSay = this.state.name;
     Speech.speak(thingToSay);
