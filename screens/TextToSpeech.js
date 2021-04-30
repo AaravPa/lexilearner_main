@@ -1,10 +1,11 @@
 // importing React
 import * as React from 'react';
 // Importing all the necessary components.
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Keyboard } from 'react-native';
 // Importing "Speech" to say what the user typed in.
 import * as Speech from "expo-speech";
 
+// exporting the class so other files can import it.
 export default class TextToSpeechScreen extends React.Component {
   constructor() {
     super();
@@ -13,24 +14,21 @@ export default class TextToSpeechScreen extends React.Component {
       name: ""
     }
   }
-
   // function that will say whatever is inside of "name" state.
   speak = () => {
-    var thingToSay = this.state.name;
-    Speech.speak(thingToSay);
-  }
-
+  var thingToSay = this.state.name;
+  Speech.speak(thingToSay);
+}
  render() {
   return (
     // giving style to everything inside of View Component
-  <View style={styles.container}>
-       <View style={styles.profileContainer}>
+    <View style={styles.container}>
+      <View style={styles.profileContainer}>
           <Text style={styles.title}>Audify</Text>
         </View>
       <View style={styles.buttonContainer}>
       <KeyboardAvoidingView>
-      <View>       
-      <TextInput style ={styles.inputBox} placeholder={"type/paste text here"}
+      <TextInput style ={styles.inputBox}
       onChangeText= {(text) => {
         this.setState({ name: text});
       }}
@@ -38,19 +36,17 @@ export default class TextToSpeechScreen extends React.Component {
       multiline={true}
       value= {this.state.text}>
       </TextInput>
-      </View>
       </KeyboardAvoidingView>
-      <TouchableOpacity style={styles.listenButton}
+      <TouchableOpacity style ={styles.button}
       // onPress will call the speak function, as well as dismiss the keyboard of the phone.
       onPress ={()=> {
-        this.setState({isHidden:true, isHidden4:true, isHidden5:false, isHidden6:false})
-        this.speak();      
+        this.speak(); 
         Keyboard.dismiss();
       }}>
         <Text style ={styles.buttonText}>Listen</Text>
       </TouchableOpacity>
-    </View> 
-</View>
+    </View>
+  </View>
   );
  }
 }
@@ -70,19 +66,17 @@ const styles = StyleSheet.create({
     fontWeight: "200",
     paddingBottom: 25,
     color: '#005588',
-    marginTop: -90
+    marginTop: 10,
   },
   inputBox: {
-    fontSize:20,
     width: 300,
     height: 40,
     borderBottomWidth: 1.5,
     borderColor: '#005588',
     fontSize: 20,
     margin: 10,
-    marginTop: -130,
-    //paddingLeft: 10,
-    textAlign:"center"
+    marginTop: -20,
+    paddingLeft: 10,
   },
   button: {
     width: 300,
@@ -93,46 +87,10 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     backgroundColor: '#005588',
     shadowColor: '#000',
-    opacity: 1,
     shadowOffset: {
       width: 0,
       height: 8,
     },
-  shadowOpacity: 0.3,
-  shadowRadius: 10.32,
-  elevation: 16,
-},
-listenButton: {
-  width: 300,
-  height: 50,
-  marginTop: -50,
-  justifyContent: 'center',
-  alignItems: 'center',
-  borderRadius: 25,
-  backgroundColor: '#005588',
-  shadowColor: '#000',
-  opacity: 1,
-  shadowOffset: {
-    width: 0,
-    height: 8,
-  },
-shadowOpacity: 0.3,
-shadowRadius: 10.32,
-elevation: 16,
-},
-    button2: {
-      width: 240,
-      height: 40,
-      marginTop: 30,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: 25,
-      backgroundColor: '#005588',
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 8,
-      },
     shadowOpacity: 0.3,
     shadowRadius: 10.32,
     elevation: 16,
@@ -141,20 +99,6 @@ elevation: 16,
     color: '#FFFF',
     fontWeight: "200",
     fontSize: 25,
-  },
-  text: {
-    marginTop:12,
-    marginBottom:-5,
-    fontSize: 18,
-    color: '#005588',
-    textAlign:"center",
-  },
-  text2: {
-    marginTop:-35,
-    marginBottom:50,
-    fontSize: 18,
-    color: '#005588',
-    textAlign:"center",
   },
   buttonContainer: {
     flex: 1,
